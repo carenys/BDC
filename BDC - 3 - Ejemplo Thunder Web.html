@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe Thunder | SAP Business Data Cloud Assessment</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0A1929; /* Azul Profundo / Corporativo */
+            --secondary: #008FD3; /* Azul SAP Brillante */
+            --accent: #F0AB00; /* Dorado SAP / Acción */
+            --text-main: #333333;
+            --text-light: #666666;
+            --bg-light: #F8F9FA;
+            --bg-white: #FFFFFF;
+            --gradient: linear-gradient(135deg, #0A1929 0%, #003366 100%);
+            --shadow-card: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        /* --- RESET & TYPOGRAPHY --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-main);
+            background-color: var(--bg-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5 { font-family: 'Montserrat', sans-serif; }
+        
+        /* --- UTILITIES --- */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .text-center { text-align: center; }
+        .section-padding { padding: 100px 0; }
+        .btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: var(--secondary);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 143, 211, 0.3);
+        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0, 143, 211, 0.5); }
+
+        /* --- HEADER / HERO --- */
+        header {
+            height: 100vh;
+            background: var(--gradient);
+            color: white;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/cubes.png');
+            opacity: 0.05;
+        }
+
+        .hero-content { z-index: 2; position: relative; max-width: 900px; padding: 20px; }
+        .hero-logo { font-size: 1.2rem; letter-spacing: 3px; opacity: 0.8; margin-bottom: 20px; text-transform: uppercase; }
+        .hero-title { font-size: 4.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 20px; letter-spacing: -2px; }
+        .hero-subtitle { font-size: 1.5rem; font-weight: 300; opacity: 0.9; margin-bottom: 40px; }
+        
+        /* --- CARDS GRID --- */
+        .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+        
+        .feature-card {
+            background: var(--bg-white);
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-card);
+            transition: transform 0.3s;
+            border-top: 5px solid transparent;
+        }
+        
+        .feature-card:hover { transform: translateY(-10px); border-color: var(--secondary); }
+        .feature-card i { font-size: 2.5rem; color: var(--secondary); margin-bottom: 20px; }
+        .feature-card h3 { margin-bottom: 15px; color: var(--primary); font-size: 1.3rem; }
+        .feature-card p { font-size: 0.95rem; color: var(--text-light); }
+
+        /* --- DIAGNOSTICS & AS-IS DIAGRAM --- */
+        .diagnosis-section { padding-bottom: 50px; }
+        .diagnosis-wrapper { display: flex; flex-wrap: wrap; gap: 50px; align-items: flex-start; margin-top: 40px; }
+        .diagnosis-charts { flex: 1; min-width: 300px; }
+        .diagnosis-text { flex: 1; min-width: 300px; background: white; padding: 40px; border-radius: 16px; box-shadow: var(--shadow-card); }
+        
+        .skill-bar { margin-bottom: 25px; }
+        .skill-meta { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; }
+        .progress-bg { height: 10px; background: #E0E0E0; border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--secondary); width: 0; animation: fillBar 1.5s ease-out forwards; }
+        .progress-fill.cost { background: var(--accent); }
+        @keyframes fillBar { from { width: 0; } }
+
+        .kpi-list li { margin-bottom: 15px; padding-left: 25px; position: relative; }
+        .kpi-list li::before { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; color: green; position: absolute; left: 0; }
+        .kpi-list li.warn::before { content: '\f12a'; color: var(--accent); }
+
+        /* AS-IS DIAGRAM BOXES */
+        .asis-diagram-container {
+            display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap;
+            margin-bottom: 60px; padding: 30px; background: #EBF5FB; border-radius: 15px;
+        }
+        .asis-box { 
+            background: white; padding: 15px 20px; border-radius: 8px; text-align: center; 
+            font-size: 0.9rem; font-weight: bold; color: #555; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            min-width: 140px;
+        }
+        .asis-box.core { 
+            background: var(--primary); color: white; padding: 25px; font-size: 1.1rem; 
+            border: 2px solid var(--primary);
+        }
+        .asis-arrow { color: #999; font-size: 1.2rem; }
+
+
+        /* --- TIMELINE WITH DIAGRAMS --- */
+        .timeline-section { background: var(--primary); color: white; padding-bottom: 120px; }
+        .timeline-container { position: relative; max-width: 1000px; margin: 0 auto; }
+        .timeline-container::after { content: ''; position: absolute; width: 4px; background: rgba(255,255,255,0.2); top: 0; bottom: 0; left: 50%; transform: translateX(-50%); }
+        
+        .timeline-item { padding: 10px 40px; position: relative; width: 50%; box-sizing: border-box; }
+        .timeline-item.left { left: 0; text-align: right; }
+        .timeline-item.right { left: 50%; text-align: left; }
+        
+        .timeline-content { padding: 30px; background: white; border-radius: 12px; color: var(--text-main); position: relative; }
+        .timeline-content h3 { color: var(--secondary); margin-bottom: 5px; }
+        .timeline-content .year { display: inline-block; background: var(--primary); color: white; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; margin-bottom: 15px; font-weight: bold; }
+        
+        .timeline-marker { position: absolute; width: 20px; height: 20px; background: var(--accent); border-radius: 50%; top: 35px; z-index: 2; border: 4px solid #fff; }
+        .left .timeline-marker { right: -54px; }
+        .right .timeline-marker { left: -54px; }
+
+        /* MINI DIAGRAMS INSIDE TIMELINE */
+        .diagram-mini {
+            margin-top: 15px;
+            background: #f8f9fa;
+            border: 1px dashed #ccc;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center; /* Centrar contenido */
+        }
+        .diagram-mini h5 { font-size: 0.75rem; text-transform: uppercase; color: #888; margin-bottom: 10px; letter-spacing: 1px; }
+        
+        .tech-stack-row {
+            display: flex;
+            justify-content: center; /* Centrar los bloques */
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tech-badge {
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .tb-bw { background: #e0e0e0; color: #444; border: 1px solid #ccc; }
+        .tb-new { background: #e3f2fd; color: #0277bd; border: 1px solid #81d4fa; }
+        .tb-legacy { background: #ffebee; color: #c62828; text-decoration: line-through; opacity: 0.6; }
+        .tb-core { background: var(--primary); color: white; border: 1px solid var(--primary); }
+        .tb-ok { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+
+        .d-arrow-mini { color: #aaa; font-size: 0.8rem; }
+
+
+        /* --- ARCHITECTURE --- */
+        .arch-layer { 
+            background: white; border-left: 6px solid var(--secondary); 
+            padding: 25px; margin-bottom: 20px; border-radius: 8px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: flex; align-items: center; 
+        }
+        .arch-icon { width: 80px; font-size: 2rem; color: var(--primary); text-align: center; }
+        .arch-info h4 { font-size: 1.2rem; color: var(--primary); margin-bottom: 5px; }
+        .arch-info p { font-size: 0.95rem; color: var(--text-light); margin: 0; }
+
+        /* --- GOVERNANCE --- */
+        .gov-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px; }
+        .gov-item { background: white; padding: 25px; text-align: center; border-radius: 12px; border: 1px solid #eee; }
+        .gov-item i { font-size: 2rem; color: var(--secondary); margin-bottom: 15px; }
+
+        /* --- STEPS --- */
+        .steps-container { counter-reset: step; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+        .step-card { background: white; padding: 30px 20px; border-radius: 12px; text-align: center; position: relative; border-top: 4px solid var(--secondary); }
+        .step-card::before {
+            counter-increment: step; content: counter(step);
+            width: 40px; height: 40px; background: var(--primary); color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; margin: 0 auto 20px;
+        }
+        .step-details { text-align: left; margin-top: 15px; font-size: 0.85rem; color: #555; list-style: none; }
+        .step-details li { margin-bottom: 5px; padding-left: 10px; border-left: 2px solid #eee; }
+
+        /* --- LICENSE TABLE --- */
+        .license-table { width: 100%; border-collapse: collapse; background: white; box-shadow: var(--shadow-card); border-radius: 12px; overflow: hidden; }
+        .license-table th { background: var(--primary); color: white; padding: 20px; text-align: left; }
+        .license-table td { padding: 20px; border-bottom: 1px solid #eee; }
+
+        /* MOBILE FIXES */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 3rem; }
+            .asis-diagram-container { flex-direction: column; }
+            .asis-arrow { transform: rotate(90deg); }
+            .diagnosis-wrapper { flex-direction: column; }
+            .timeline-container::after { left: 30px; }
+            .timeline-item { width: 100%; padding-left: 70px; padding-right: 20px; text-align: left; }
+            .timeline-item.left { text-align: left; }
+            .left .timeline-marker, .right .timeline-marker { left: 21px; right: auto; }
+            .gov-grid { grid-template-columns: 1fr; }
+            .tech-stack-row { flex-direction: column; } /* Pilas verticales en móvil */
+            .d-arrow-mini { transform: rotate(90deg); margin: 5px 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="hero-content">
+            <div class="hero-logo">STRATESYS | SAP ASSESSMENT</div>
+            <h1 class="hero-title">PROJECT THUNDER</h1>
+            <p class="hero-subtitle">Evolución estratégica hacia SAP Business Data Cloud: Unificación, Gobierno e Inteligencia Artificial.</p>
+            <a href="#analisis" class="btn">Iniciar Recorrido</a>
+        </div>
+    </header>
+
+    <section class="section-padding" style="background: white;">
+        <div class="container">
+            <h2 class="text-center" style="margin-bottom: 20px; font-size: 2.5rem; color: var(--primary);">La Solución: SAP BDC</h2>
+            <p class="text-center" style="max-width: 800px; margin: 0 auto 60px; color: var(--text-light);">
+                Una plataforma unificadora SaaS que actúa como núcleo central, eliminando la fragmentación de datos y habilitando la "Data Fabric" empresarial para la era de la IA.
+            </p>
+            
+            <div class="grid-4">
+                <div class="feature-card">
+                    <i class="fas fa-project-diagram"></i>
+                    <h3>Conectividad Unificada</h3>
+                    <p>Acceso federado a datos SAP (S/4HANA, SuccessFactors) y No-SAP (Salesforce, Azure) sin necesidad de replicación masiva.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Gobierno Robusto</h3>
+                    <p>Catálogo de datos empresarial, linaje completo y políticas de seguridad centralizadas para una única fuente de verdad.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-brain"></i>
+                    <h3>IA & Machine Learning</h3>
+                    <p>Integración nativa con SAP Databricks y modelos de IA generativa (Joule) para insights predictivos.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>Cloud Native</h3>
+                    <p>Arquitectura SaaS elástica que reduce el TCO, eliminando mantenimientos de hardware y actualizaciones manuales.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="analisis" class="section-padding diagnosis-section">
+        <div class="container">
+            <h2 class="text-center" style="margin-bottom: 20px; font-size: 2.5rem; color: var(--primary);">Diagnóstico Actual (AS-IS)</h2>
+            <p class="text-center" style="margin-bottom: 40px; color: #666;">Arquitectura centralizada en BW tradicional con múltiples herramientas dispersas.</p>
+
+            <div class="asis-diagram-container">
+                <div class="asis-box">
+                    Fuentes<br><small>(SAP ECC, CRM, SF)</small>
+                </div>
+                <div class="asis-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="asis-box core">
+                    <i class="fas fa-database"></i><br>SAP BW 7.5<br><small>on HANA</small>
+                </div>
+                <div class="asis-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="asis-box">
+                    Consumo Disperso<br><small>(Analyzer, Board, Excel)</small>
+                </div>
+            </div>
+            
+            <div class="diagnosis-wrapper">
+                <div class="diagnosis-charts">
+                    <div class="skill-bar">
+                        <div class="skill-meta"><span>Funcionalidad (Operativa)</span><span>86%</span></div>
+                        <div class="progress-bg"><div class="progress-fill" style="width: 86%;"></div></div>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-meta"><span>Adopción de Usuarios</span><span>85%</span></div>
+                        <div class="progress-bg"><div class="progress-fill" style="width: 85%;"></div></div>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-meta"><span>Solidez Técnica</span><span>81%</span></div>
+                        <div class="progress-bg"><div class="progress-fill" style="width: 81%;"></div></div>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-meta"><span>Seguridad & Accesos</span><span>71%</span></div>
+                        <div class="progress-bg"><div class="progress-fill" style="width: 71%;"></div></div>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-meta"><span>Arquitectura de Datos</span><span>69%</span></div>
+                        <div class="progress-bg"><div class="progress-fill" style="width: 69%;"></div></div>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-meta"><span>Optimización de Costes</span><span>67%</span></div>
+                        <div class="progress-bg"><div class="progress-fill cost" style="width: 67%;"></div></div>
+                    </div>
+                </div>
+
+                <div class="diagnosis-text">
+                    <h3 style="color: var(--primary); margin-bottom: 20px;">Análisis de Situación</h3>
+                    <ul class="kpi-list" style="list-style: none;">
+                        <li><strong>Fortaleza Cultural:</strong> Amplio uso de datos en Finanzas, Ventas y Logística, lo que facilita la transición.</li>
+                        <li><strong>Infraestructura:</strong> SAP BW 7.5 on HANA es robusto pero tradicional. La arquitectura actual es monolítica y requiere evolución hacia la federación.</li>
+                        <li class="warn"><strong>Gobierno del Dato:</strong> Aunque hay seguridad básica (roles), falta trazabilidad "End-to-End" y un catálogo de datos unificado.</li>
+                        <li class="warn"><strong>Fragmentación:</strong> Uso de múltiples herramientas de consumo (Analyzer, Board, Excel manual) que generan silos de información.</li>
+                        <li class="warn"><strong>Oportunidad de Costes:</strong> Elevado coste de mantenimiento de sistemas legacy y licencias dispersas.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding timeline-section">
+        <div class="container">
+            <h2 class="text-center" style="margin-bottom: 20px; color: white;">Hoja de Ruta Estratégica</h2>
+            <p class="text-center" style="color: rgba(255,255,255,0.7); margin-bottom: 60px;">Plan de transición gradual hacia la nube (2025 - 2030+)</p>
+
+            <div class="timeline-container">
+                <div class="timeline-item left">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <span class="year">Fase 1: Preparación</span>
+                        <h3>Integración Inicial</h3>
+                        <p>Inclusión de <strong>SAP BW 7.5</strong> dentro del bloque BDC. Activación de primeros Data Products.</p>
+                        
+                        <div class="diagram-mini">
+                            <h5>Arquitectura Fase 1</h5>
+                            <div class="tech-stack-row">
+                                <div class="tech-badge tb-core">SAP BW 7.5</div>
+                                <div class="d-arrow-mini"><i class="fas fa-plus"></i></div>
+                                <div class="tech-badge tb-new">Data Products</div>
+                                <div class="tech-badge tb-new">Databricks (POC)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item right">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <span class="year">2026 - 2027</span>
+                        <h3>Despliegue & Quick Wins</h3>
+                        <p>Activación de SAP Datasphere y migración de reporting a SAC.</p>
+                        
+                        <div class="diagram-mini">
+                            <h5>Arquitectura Fase 2</h5>
+                            <div class="tech-stack-row">
+                                <div class="tech-badge tb-new">Datasphere (Live)</div>
+                                <div class="tech-badge tb-bw">BW 7.5</div>
+                                <div class="d-arrow-mini"><i class="fas fa-chevron-right"></i></div>
+                                <div class="tech-badge tb-ok">SAC Add-In</div>
+                                <div class="tech-badge tb-legacy">Analyzer</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item left">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <span class="year">2028 - 2030</span>
+                        <h3>Consolidación Híbrida</h3>
+                        <p>Todo el desarrollo nuevo en Datasphere. Eliminación de legacy.</p>
+                        
+                        <div class="diagram-mini">
+                            <h5>Arquitectura Fase 3</h5>
+                            <div class="tech-stack-row">
+                                <div class="tech-badge tb-core">Datasphere</div>
+                                <div class="tech-badge tb-bw">BW 7.5 (Solo histórico)</div>
+                                <div class="tech-badge tb-legacy">Board</div>
+                                <div class="tech-badge tb-legacy">Analyzer</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item right">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <span class="year">> 2030</span>
+                        <h3>Full Cloud BDC</h3>
+                        <p>Arquitectura 100% Cloud. Core único y Gobierno automatizado.</p>
+                        
+                        <div class="diagram-mini">
+                            <h5>Arquitectura Final</h5>
+                            <div class="tech-stack-row">
+                                <div class="tech-badge tb-core">SAP Datasphere</div>
+                                <div class="d-arrow-mini"><i class="fas fa-arrow-right"></i></div>
+                                <div class="tech-badge tb-ok">SAP SAC (Único)</div>
+                                <div class="tech-badge tb-new">Databricks (AI)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding" style="background: var(--bg-light);">
+        <div class="container">
+            <h2 class="text-center" style="color: var(--primary); margin-bottom: 50px;">Arquitectura TO-BE Detallada</h2>
+            
+            <div style="max-width: 900px; margin: 0 auto;">
+                <div class="arch-layer">
+                    <div class="arch-icon"><i class="fas fa-laptop-code"></i></div>
+                    <div class="arch-info">
+                        <h4>1. Capa de Consumo Inteligente</h4>
+                        <p>Punto único de acceso mediante <strong>SAP Analytics Cloud</strong>, Apps Inteligentes y el Add-In para Office. Visualización unificada sin silos.</p>
+                    </div>
+                </div>
+                
+                <div class="arch-layer" style="border-color: var(--accent);">
+                    <div class="arch-icon"><i class="fas fa-layer-group"></i></div>
+                    <div class="arch-info">
+                        <h4>2. Capa Semántica (SAP Datasphere)</h4>
+                        <p>El corazón del sistema. Gestiona la federación, el modelado de negocio, el <strong>Catálogo de Datos</strong> y el Linaje. Aquí reside la "verdad única".</p>
+                    </div>
+                </div>
+
+                <div class="arch-layer" style="border-color: #333;">
+                    <div class="arch-icon"><i class="fas fa-microchip"></i></div>
+                    <div class="arch-info">
+                        <h4>3. Capa de IA & Ciencia de Datos</h4>
+                        <p>Integración con <strong>Databricks</strong> para modelos complejos de Machine Learning, predicción de demanda y algoritmos avanzados.</p>
+                    </div>
+                </div>
+
+                <div class="arch-layer" style="border-left: 6px solid #ccc; background: #f4f4f4;">
+                    <div class="arch-icon"><i class="fas fa-database"></i></div>
+                    <div class="arch-info">
+                        <h4>4. Fuentes de Datos (Tierras)</h4>
+                        <p>Conectores nativos para SAP S/4HANA, SuccessFactors, Ariba y fuentes externas (Azure, AWS, Archivos Planos).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding" style="background: white;">
+        <div class="container">
+            <h2 class="text-center" style="color: var(--primary);">Modelo de Gobierno y Calidad</h2>
+            <p class="text-center" style="color: var(--text-light); margin-bottom: 40px;">Basado en las mejores prácticas DMBOK (Data Management Body of Knowledge)</p>
+
+            <div class="gov-grid">
+                <div class="gov-item">
+                    <i class="fas fa-book"></i>
+                    <h4>Catálogo y Glosario</h4>
+                    <p>Definición de términos de negocio y diccionario de datos compartido para evitar ambigüedades.</p>
+                </div>
+                <div class="gov-item">
+                    <i class="fas fa-route"></i>
+                    <h4>Linaje del Dato</h4>
+                    <p>Trazabilidad completa (End-to-End) para saber de dónde viene y quién usa cada dato.</p>
+                </div>
+                <div class="gov-item">
+                    <i class="fas fa-check-double"></i>
+                    <h4>Calidad (Data Quality)</h4>
+                    <p>Reglas automáticas para detectar duplicados, nulos e inconsistencias antes de que lleguen al reporte.</p>
+                </div>
+                <div class="gov-item">
+                    <i class="fas fa-user-lock"></i>
+                    <h4>Seguridad</h4>
+                    <p>Roles RBAC/ABAC centralizados. Cumplimiento normativo (GDPR) y auditoría de accesos.</p>
+                </div>
+                <div class="gov-item">
+                    <i class="fas fa-sitemap"></i>
+                    <h4>Organización</h4>
+                    <p>Definición de Data Stewards y Comités de Gobierno para la gestión del cambio.</p>
+                </div>
+                <div class="gov-item">
+                    <i class="fas fa-server"></i>
+                    <h4>Arquitectura</h4>
+                    <p>Estándares de integración y modelos de datos canónicos.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding" style="background: var(--bg-light);">
+        <div class="container">
+            <h2 class="text-center" style="color: var(--primary); margin-bottom: 50px;">Próximos Pasos: Metodología de Proyecto</h2>
+            
+            <div class="steps-container">
+                <div class="step-card">
+                    <h4>1. Discovery</h4>
+                    <p style="font-size: 0.9rem;">Análisis y Estrategia</p>
+                    <ul class="step-details">
+                        <li>Kick-off del proyecto</li>
+                        <li>Análisis de "Readiness"</li>
+                        <li>Cálculo de Sizing</li>
+                        <li>Diseño de Arquitectura TO-BE</li>
+                    </ul>
+                </div>
+                <div class="step-card">
+                    <h4>2. Prepare</h4>
+                    <p style="font-size: 0.9rem;">Planificación Detallada</p>
+                    <ul class="step-details">
+                        <li>Estrategia de migración de datos</li>
+                        <li>Plan de convivencia de modelos</li>
+                        <li>Configuración inicial (Tenant)</li>
+                        <li>Definición de seguridad</li>
+                    </ul>
+                </div>
+                <div class="step-card">
+                    <h4>3. Realize</h4>
+                    <p style="font-size: 0.9rem;">Ejecución y Migración</p>
+                    <ul class="step-details">
+                        <li>Migración de objetos BW</li>
+                        <li>Desarrollo de nuevos modelos</li>
+                        <li>Pruebas unitarias y de integración</li>
+                        <li>Gestión del cambio y formación</li>
+                    </ul>
+                </div>
+                <div class="step-card">
+                    <h4>4. Run</h4>
+                    <p style="font-size: 0.9rem;">Soporte y Optimización</p>
+                    <ul class="step-details">
+                        <li>Soporte Hypercare</li>
+                        <li>Monitorización de rendimiento</li>
+                        <li>Mejora continua</li>
+                        <li>Cierre del proyecto</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding">
+        <div class="container">
+            <h2 class="text-center" style="color: var(--primary); margin-bottom: 40px;">Modelo de Licenciamiento</h2>
+            <div style="overflow-x:auto;">
+                <table class="license-table">
+                    <thead>
+                        <tr>
+                            <th>Modelo</th>
+                            <th>Descripción</th>
+                            <th>Características Clave</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Capacity Units (CU)</strong></td>
+                            <td>Modelo flexible basado en consumo de recursos.</td>
+                            <td><span class="badge" style="background:#e3f2fd;color:#008FD3;padding:4px 8px;border-radius:4px;font-size:0.8rem;font-weight:bold;">Recomendado</span> Asignación libre según necesidades de cómputo y almacenamiento.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Por Usuario</strong></td>
+                            <td>Basado en bloques de usuarios nominales.</td>
+                            <td>Más tradicional, útil para escenarios con población de usuarios muy estable.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Intelligent Apps</strong></td>
+                            <td>Licenciamiento específico por aplicación.</td>
+                            <td>Requiere licenciamiento base de la App SAP correspondiente (ej. CX, Ariba).</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="text-align: center; margin-top: 20px; font-size: 0.9rem; color: #777;">
+                * Nota: Al contratar a través de Stratesys pueden aplicar condiciones especiales y descuentos sobre tarifas oficiales SAP.
+            </p>
+        </div>
+    </section>
+
+    <footer style="background: #111; color: #777; padding: 50px 0; text-align: center; font-size: 0.9rem;">
+        <div class="container">
+            <p style="margin-bottom: 10px; color: white; font-weight: bold;">STRATESYS TECHNOLOGY SOLUTIONS</p>
+            <p>Informe Confidencial para Damm - Project Thunder © 2026</p>
+        </div>
+    </footer>
+
+</body>
+</html>
